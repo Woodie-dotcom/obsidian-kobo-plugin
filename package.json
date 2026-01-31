@@ -13,7 +13,7 @@
         "highlights",
         "ereader"
     ],
-    "author": "",
+    "author": "woodie-dotcom",
     "license": "MIT",
     "devDependencies": {
         "@types/node": "^20.10.0",
