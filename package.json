@@ -1,0 +1,27 @@
+{
+    "name": "obsidian-kobo-highlights",
+    "version": "1.0.0",
+    "description": "Import Kobo eReader highlights into Obsidian",
+    "main": "main.js",
+    "scripts": {
+        "dev": "node esbuild.config.mjs",
+        "build": "node esbuild.config.mjs production"
+    },
+    "keywords": [
+        "obsidian",
+        "kobo",
+        "highlights",
+        "ereader"
+    ],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "esbuild": "^0.19.8",
+        "obsidian": "^1.5.3",
+        "typescript": "^5.3.2"
+    },
+    "dependencies": {
+        "sql.js": "^1.9.0"
+    }
+}

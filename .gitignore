@@ -1,0 +1,38 @@
+# Obsidian
+.obsidian/
+.trash/
+
+# Build artifacts
+main.js
+dist/
+build/
+
+# Node modules
+node_modules/
+package-lock.json
+yarn.lock
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Test files and databases
+Tests/
+test-db.js
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+
+# Helper scripts
+scripts/
+examples/
+
+# Agent artifacts
+.gemini/
+.agent/
+task.md
+todo.md
+implementation_plan.md
+walkthrough.md
+*.log
