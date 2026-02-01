@@ -8,7 +8,7 @@
 import initSqlJs, { Database, SqlJsStatic } from 'sql.js';
 
 // ============================================================================
-// Interfaces (from October's device.go)
+// Interfaces 
 // ============================================================================
 
 /**

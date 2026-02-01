@@ -53,3 +53,6 @@ You can customize how highlights are formatted using the settings.
 1. Clone this repository.
 2. Run `npm install` to install dependencies.
 3. Run `npm run dev` to start the development build in watch mode.
+
+## Acknowledgements
+This project was partially inspired by [October](https://github.com/marcus-crane/october), a Kobo highlights extraction tool for Readwise by Marcus Crane.
