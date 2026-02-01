@@ -45,28 +45,28 @@ export function formatDate(dateStr: string | null | undefined, format: string): 
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) return dateStr;
 
-        const months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ];
+        // Use Intl.DateTimeFormat for localized month and day names
+        const getMonthName = (d: Date, locale = 'en') => {
+            return new Intl.DateTimeFormat(locale, { month: 'long' }).format(d);
+        };
 
-        const monthsIt = [
-            'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
-            'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'
-        ];
-
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const getDayName = (d: Date, locale = 'en') => {
+            return new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(d);
+        };
 
         const pad = (n: number) => n.toString().padStart(2, '0');
+
+        // Get user's locale from Obsidian/browser, fallback to English
+        const userLocale = navigator?.language || 'en';
 
         // IMPORTANT: Replace longer tokens first to avoid partial matches
         // e.g., MMMM must be replaced before MM, otherwise MM gets replaced first
         return format
             .replace('YYYY', date.getFullYear().toString())
-            .replace('MMMM', monthsIt[date.getMonth()])  // Full month name (Italian)
-            .replace('MMM', months[date.getMonth()].substring(0, 3))  // Short month name
+            .replace('MMMM', getMonthName(date, userLocale))  // Full month name (localized)
+            .replace('MMM', getMonthName(date, userLocale).substring(0, 3))  // Short month name
             .replace('MM', pad(date.getMonth() + 1))  // Numeric month
-            .replace('dddd', days[date.getDay()])  // Full day name
+            .replace('dddd', getDayName(date, userLocale))  // Full day name (localized)
             .replace('DD', pad(date.getDate()))
             .replace('HH', pad(date.getHours()))
             .replace('mm', pad(date.getMinutes()))

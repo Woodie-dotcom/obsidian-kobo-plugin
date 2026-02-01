@@ -4,7 +4,7 @@
  * Plugin settings management and settings tab UI with template configuration.
  */
 
-import { App, PluginSettingTab, Setting, Platform, TextAreaComponent } from 'obsidian';
+import { App, PluginSettingTab, Setting } from 'obsidian';
 import type KoboHighlightsPlugin from './main';
 import { DEFAULT_TEMPLATES, renderTemplate, TemplateContext } from './template-engine';
 
@@ -69,21 +69,16 @@ export class KoboSettingTab extends PluginSettingTab {
         // ====================================================================
         containerEl.createEl('h2', { text: 'General Settings' });
 
-        // Database path setting
+        // Database path setting (manual entry only - Browse removed for electron compatibility)
         new Setting(containerEl)
             .setName('Database Path')
-            .setDesc('Path to your KoboReader.sqlite file from the .kobo folder on your Kobo device.')
+            .setDesc('Full path to your KoboReader.sqlite file. Connect your Kobo, navigate to the .kobo folder, and copy the full path.')
             .addText(text => text
-                .setPlaceholder('/path/to/KoboReader.sqlite')
+                .setPlaceholder('C:\\Users\\...\\KoboReader.sqlite or /Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
                 .setValue(this.plugin.settings.databasePath)
                 .onChange(async (value) => {
                     this.plugin.settings.databasePath = value;
                     await this.plugin.saveSettings();
-                }))
-            .addButton(button => button
-                .setButtonText('Browse')
-                .onClick(async () => {
-                    await this.browseForDatabase();
                 }));
 
         // Output folder setting
@@ -322,54 +317,6 @@ export class KoboSettingTab extends PluginSettingTab {
                 text: `Preview error: ${error instanceof Error ? error.message : 'Unknown error'}`,
                 cls: 'kobo-preview-error'
             });
-        }
-    }
-
-    private async browseForDatabase(): Promise<void> {
-        if (!Platform.isDesktop) {
-            return;
-        }
-
-        try {
-            // Use Electron's dialog module via window.require
-            const { remote } = window.require('electron');
-            const dialog = remote?.dialog;
-
-            if (!dialog) {
-                const electronRemote = window.require('@electron/remote');
-                if (electronRemote?.dialog) {
-                    const result = await electronRemote.dialog.showOpenDialog({
-                        properties: ['openFile'],
-                        filters: [
-                            { name: 'SQLite Database', extensions: ['sqlite', 'sqlite3'] }
-                        ]
-                    });
-
-                    if (!result.canceled && result.filePaths.length > 0) {
-                        this.plugin.settings.databasePath = result.filePaths[0];
-                        await this.plugin.saveSettings();
-                        this.display();
-                    }
-                    return;
-                }
-            }
-
-            if (dialog) {
-                const result = await dialog.showOpenDialog({
-                    properties: ['openFile'],
-                    filters: [
-                        { name: 'SQLite Database', extensions: ['sqlite', 'sqlite3'] }
-                    ]
-                });
-
-                if (!result.canceled && result.filePaths.length > 0) {
-                    this.plugin.settings.databasePath = result.filePaths[0];
-                    await this.plugin.saveSettings();
-                    this.display();
-                }
-            }
-        } catch (error) {
-            console.error('Failed to open file dialog:', error);
         }
     }
 }
