@@ -6,6 +6,7 @@
  */
 
 import initSqlJs, { Database, SqlJsStatic } from 'sql.js';
+import { SQL_WASM_BASE64 } from './wasm-data';
 
 // ============================================================================
 // Interfaces 
@@ -82,27 +83,18 @@ export interface BookChapterData {
 let SQL: SqlJsStatic | null = null;
 
 /**
- * Initialize sql.js with WASM loaded via Node.js fs (required for Obsidian/Electron)
- * @param pluginPath - Absolute path to the plugin directory containing sql-wasm.wasm
+ * Initialize sql.js with WASM loaded from inline base64 (no external file needed)
  */
-async function initSQL(pluginPath: string): Promise<SqlJsStatic> {
+async function initSQL(): Promise<SqlJsStatic> {
     if (SQL) return SQL;
 
-    // In Obsidian/Electron, we must load WASM via Node.js fs
-    // because fetch() doesn't work with local file paths
-    const nodeFs = window.require('fs');
-    const nodePath = window.require('path');
-
-    const wasmPath = nodePath.join(pluginPath, 'sql-wasm.wasm');
-
-    if (!nodeFs.existsSync(wasmPath)) {
-        throw new Error(`WASM file not found at: ${wasmPath}`);
+    // Decode Base64 WASM directly from bundle
+    // This eliminates the need for an external sql-wasm.wasm file
+    const binaryString = atob(SQL_WASM_BASE64);
+    const wasmBinary = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        wasmBinary[i] = binaryString.charCodeAt(i);
     }
-
-    // Read the WASM file as a Buffer and convert to Uint8Array
-    // Node.js Buffer is not directly usable as wasmBinary, needs conversion
-    const wasmBuffer = nodeFs.readFileSync(wasmPath);
-    const wasmBinary = new Uint8Array(wasmBuffer.buffer, wasmBuffer.byteOffset, wasmBuffer.length);
 
     SQL = await initSqlJs({
         // Pass the WASM binary directly to avoid fetch()
@@ -115,10 +107,9 @@ async function initSQL(pluginPath: string): Promise<SqlJsStatic> {
 /**
  * Open a Kobo database from a file buffer
  * @param buffer - ArrayBuffer containing the database file
- * @param pluginPath - Absolute path to the plugin directory containing sql-wasm.wasm
  */
-export async function openDatabase(buffer: ArrayBuffer, pluginPath: string): Promise<Database> {
-    const sql = await initSQL(pluginPath);
+export async function openDatabase(buffer: ArrayBuffer): Promise<Database> {
+    const sql = await initSQL();
     return new sql.Database(new Uint8Array(buffer));
 }
 

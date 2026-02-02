@@ -285,16 +285,11 @@ class ImportProgressModal extends Modal {
             fileBuffer.byteOffset + fileBuffer.byteLength
         );
 
-        // Step 2: Open database with local WASM path
+        // Step 2: Open database (WASM is inline, no external file needed)
         this.setStatus('Opening database...');
         this.setProgress(20);
 
-        // Get the plugin's directory path for loading the local WASM file
-        // manifest.dir is relative to vault config, we need absolute path
-        const pathModule = window.require('path');
-        const vaultBasePath = (this.app.vault.adapter as any).basePath;
-        const pluginPath = pathModule.join(vaultBasePath, this.plugin.manifest.dir || '');
-        const db = await openDatabase(arrayBuffer, pluginPath);
+        const db = await openDatabase(arrayBuffer);
 
         try {
             // Step 3: Count bookmarks
