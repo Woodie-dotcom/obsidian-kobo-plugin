@@ -5,7 +5,7 @@
  * SQLite database into Obsidian notes.
  */
 
-import { App, Modal, Notice, Plugin, TFile, TFolder, Platform } from 'obsidian';
+import { App, Modal, Notice, Plugin, Setting, TFile, TFolder, Platform } from 'obsidian';
 import {
     openDatabase,
     listDeviceContent,
@@ -43,18 +43,15 @@ export default class KoboHighlightsPlugin extends Plugin {
         // Add command to import highlights
         this.addCommand({
             id: 'import-kobo-highlights',
-            name: 'Import Kobo Highlights',
-            callback: () => this.importHighlights(),
+            name: 'Import Kobo highlights',
+            callback: () => { void this.importHighlights(); },
         });
 
         // Add settings tab
         this.addSettingTab(new KoboSettingTab(this.app, this));
-
-        console.log('Kobo Highlights Importer loaded');
     }
 
     onunload() {
-        console.log('Kobo Highlights Importer unloaded');
     }
 
     async loadSettings() {
@@ -162,7 +159,7 @@ export default class KoboHighlightsPlugin extends Plugin {
     /**
      * Read a file from the filesystem using Node.js fs module
      */
-    async readDatabaseFile(filePath: string): Promise<ArrayBuffer> {
+    readDatabaseFile(filePath: string): ArrayBuffer {
         if (Platform.isDesktop) {
             const nodeFs = window.require('fs');
             const nodePath = window.require('path');
@@ -174,7 +171,7 @@ export default class KoboHighlightsPlugin extends Plugin {
             }
 
             const buffer: Buffer = nodeFs.readFileSync(normalizedPath);
-            return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+            return (buffer.buffer as ArrayBuffer).slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
         } else {
             throw new Error('This plugin only works on desktop (not mobile).');
         }
@@ -202,7 +199,7 @@ class ImportProgressModal extends Modal {
         this.contentEl_.empty();
         this.contentEl_.addClass('kobo-import-modal');
 
-        this.contentEl_.createEl('h2', { text: 'Importing Kobo Highlights' });
+        new Setting(this.contentEl_).setName('Importing Kobo highlights').setHeading();
 
         this.statusEl = this.contentEl_.createEl('p', {
             text: 'Initializing...',
@@ -212,7 +209,7 @@ class ImportProgressModal extends Modal {
         const progressContainer = this.contentEl_.createDiv({ cls: 'kobo-import-progress' });
         const progressBar = progressContainer.createDiv({ cls: 'progress-bar' });
         this.progressEl = progressBar.createDiv({ cls: 'progress-bar-fill' });
-        this.progressEl.style.width = '0%';
+        this.progressEl.setCssStyles({ width: '0%' });
 
         this.statsEl = this.contentEl_.createDiv({ cls: 'kobo-import-stats' });
     }
@@ -225,19 +222,19 @@ class ImportProgressModal extends Modal {
 
     setProgress(percent: number) {
         if (this.progressEl) {
-            this.progressEl.style.width = `${percent}%`;
+            this.progressEl.setCssStyles({ width: `${percent}%` });
         }
     }
 
     showError(message: string) {
         this.setStatus(`Error: ${message}`);
         if (this.progressEl) {
-            this.progressEl.style.backgroundColor = 'var(--text-error)';
+            this.progressEl.addClass('progress-error');
         }
     }
 
     showStats(
-        counts: HighlightCounts,
+        _counts: HighlightCounts,
         booksProcessed: number,
         newBooks: number,
         newHighlights: number,
@@ -280,7 +277,7 @@ class ImportProgressModal extends Modal {
         this.setProgress(15);
 
         const fileBuffer: Buffer = nodeFs.readFileSync(normalizedPath);
-        const arrayBuffer = fileBuffer.buffer.slice(
+        const arrayBuffer = (fileBuffer.buffer as ArrayBuffer).slice(
             fileBuffer.byteOffset,
             fileBuffer.byteOffset + fileBuffer.byteLength
         );
@@ -297,7 +294,7 @@ class ImportProgressModal extends Modal {
             this.setProgress(30);
 
             const counts = countDeviceBookmarks(db);
-            console.log('Highlight counts:', counts);
+            console.debug('Highlight counts:', counts);
 
             if (counts.total === 0) {
                 throw new Error('No highlights found in the database.');
@@ -309,28 +306,28 @@ class ImportProgressModal extends Modal {
 
             const content = listDeviceContent(db, this.plugin.settings.includeStoreBought);
             const contentIndex = buildContentIndex(content);
-            console.log('Loaded content:', content.length, 'books');
+            console.debug('Loaded content:', content.length, 'books');
 
             // Step 5: Load bookmarks
             this.setStatus('Loading highlights...');
             this.setProgress(50);
 
             const bookmarks = listDeviceBookmarks(db, this.plugin.settings.includeStoreBought);
-            console.log('Loaded bookmarks:', bookmarks.length, 'highlights');
+            console.debug('Loaded bookmarks:', bookmarks.length, 'highlights');
 
             // Step 6: Process highlights
             this.setStatus('Processing highlights...');
             this.setProgress(60);
 
             const booksWithHighlights = processHighlights(bookmarks, contentIndex);
-            console.log('Processed:', booksWithHighlights.length, 'books with highlights');
+            console.debug('Processed:', booksWithHighlights.length, 'books with highlights');
 
             // Step 7: Load chapter data for accurate position calculation
             this.setStatus('Loading chapter data...');
             this.setProgress(65);
 
             const allChapterData = getBookChapterData(db);
-            console.log('Loaded chapter data for', allChapterData.size, 'books');
+            console.debug('Loaded chapter data for', allChapterData.size, 'books');
 
             // Step 8: Ensure output folder exists
             this.setStatus('Creating output folder...');

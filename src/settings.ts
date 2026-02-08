@@ -62,16 +62,16 @@ export class KoboSettingTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        containerEl.createEl('h1', { text: 'Kobo Highlights Importer' });
+        new Setting(containerEl).setName('Kobo highlights importer').setHeading();
 
         // ====================================================================
         // General Settings Section
         // ====================================================================
-        containerEl.createEl('h2', { text: 'General Settings' });
+        new Setting(containerEl).setName('General settings').setHeading();
 
         // Database path setting (manual entry only - Browse removed for electron compatibility)
         new Setting(containerEl)
-            .setName('Database Path')
+            .setName('Database path')
             .setDesc('Full path to your KoboReader.sqlite file. Connect your Kobo, navigate to the .kobo folder, and copy the full path.')
             .addText(text => text
                 .setPlaceholder('C:\\Users\\...\\KoboReader.sqlite or /Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
@@ -80,10 +80,9 @@ export class KoboSettingTab extends PluginSettingTab {
                     this.plugin.settings.databasePath = value;
                     await this.plugin.saveSettings();
                 }));
-
         // Output folder setting
         new Setting(containerEl)
-            .setName('Output Folder')
+            .setName('Output folder')
             .setDesc('Folder where imported highlight notes will be saved (relative to vault root).')
             .addText(text => text
                 .setPlaceholder('Kobo Highlights')
@@ -92,10 +91,9 @@ export class KoboSettingTab extends PluginSettingTab {
                     this.plugin.settings.outputFolder = value;
                     await this.plugin.saveSettings();
                 }));
-
         // Include store-bought books
         new Setting(containerEl)
-            .setName('Include Store-Bought Books')
+            .setName('Include store-bought books')
             .setDesc('Import highlights from books purchased from the Kobo store, not just sideloaded books.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.includeStoreBought)
@@ -103,10 +101,9 @@ export class KoboSettingTab extends PluginSettingTab {
                     this.plugin.settings.includeStoreBought = value;
                     await this.plugin.saveSettings();
                 }));
-
         // Append mode
         new Setting(containerEl)
-            .setName('Append to Existing Notes')
+            .setName('Append to existing notes')
             .setDesc('When enabled, new highlights are added to existing notes. When disabled, notes are overwritten.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.appendToExisting)
@@ -114,11 +111,10 @@ export class KoboSettingTab extends PluginSettingTab {
                     this.plugin.settings.appendToExisting = value;
                     await this.plugin.saveSettings();
                 }));
-
         // ====================================================================
         // Template Configuration Section
         // ====================================================================
-        containerEl.createEl('h2', { text: 'Template Configuration' });
+        new Setting(containerEl).setName('Template configuration').setHeading();
 
         // Help text
         const helpDiv = containerEl.createDiv({ cls: 'kobo-template-help' });
@@ -129,22 +125,31 @@ export class KoboSettingTab extends PluginSettingTab {
 
         // Variables reference
         const variablesDiv = helpDiv.createEl('details');
-        variablesDiv.createEl('summary', { text: 'Available Variables' });
+        variablesDiv.createEl('summary', { text: 'Available variables' });
         const variablesList = variablesDiv.createEl('div', { cls: 'kobo-variables-list' });
-        variablesList.innerHTML = `
-			<p><strong>Book Variables:</strong></p>
-			<code>{{title}}</code> <code>{{author}}</code> <code>{{progress}}</code> <code>{{pages}}</code> <code>{{date_last_read}}</code> <code>{{highlights_count}}</code> <code>{{source}}</code> <code>{{date}}</code>
-			<p><strong>Highlight Variables:</strong></p>
-			<code>{{text}}</code> <code>{{annotation}}</code> <code>{{location}}</code> <code>{{date_created}}</code>
-			<p><strong>Conditionals:</strong></p>
-			<code>{% if annotation %}...{% endif %}</code>
-			<p><strong>Date Formatting:</strong></p>
-			<code>{{date|date('DD MMMM YYYY')}}</code>
-		`;
+
+        // Build variables list using DOM API instead of innerHTML
+        const bookVarsP = variablesList.createEl('p');
+        bookVarsP.createEl('strong', { text: 'Book variables:' });
+        const bookCodes = ['{{title}}', '{{author}}', '{{progress}}', '{{pages}}', '{{date_last_read}}', '{{highlights_count}}', '{{source}}', '{{date}}'];
+        bookCodes.forEach(code => variablesList.createEl('code', { text: code }));
+
+        const hlVarsP = variablesList.createEl('p');
+        hlVarsP.createEl('strong', { text: 'Highlight variables:' });
+        const hlCodes = ['{{text}}', '{{annotation}}', '{{location}}', '{{date_created}}'];
+        hlCodes.forEach(code => variablesList.createEl('code', { text: code }));
+
+        const condP = variablesList.createEl('p');
+        condP.createEl('strong', { text: 'Conditionals:' });
+        variablesList.createEl('code', { text: '{% if annotation %}...{% endif %}' });
+
+        const dateP = variablesList.createEl('p');
+        dateP.createEl('strong', { text: 'Date formatting:' });
+        variablesList.createEl('code', { text: "{{date|date('DD MMMM YYYY')}}" });
 
         // File name template
         new Setting(containerEl)
-            .setName('File Name')
+            .setName('File name')
             .setDesc('Template for the note file name (without .md extension).')
             .addText(text => text
                 .setPlaceholder('{{title}}')
@@ -197,11 +202,10 @@ export class KoboSettingTab extends PluginSettingTab {
             defaultValue: DEFAULT_TEMPLATES.syncHeader,
             height: 80,
         });
-
         // ====================================================================
         // Preview Section
         // ====================================================================
-        containerEl.createEl('h2', { text: 'Template Preview' });
+        new Setting(containerEl).setName('Template preview').setHeading();
 
         const previewContainer = containerEl.createDiv({ cls: 'kobo-template-preview' });
         this.renderPreview(previewContainer);
@@ -209,14 +213,14 @@ export class KoboSettingTab extends PluginSettingTab {
         // ====================================================================
         // Instructions Section
         // ====================================================================
-        containerEl.createEl('h2', { text: 'How to Use' });
+        new Setting(containerEl).setName('How to use').setHeading();
 
         const instructions = containerEl.createEl('div', { cls: 'kobo-instructions' });
         instructions.createEl('ol', {}, (ol) => {
             ol.createEl('li', { text: 'Connect your Kobo device to your computer' });
             ol.createEl('li', { text: 'Copy the KoboReader.sqlite file from the .kobo folder on your device' });
             ol.createEl('li', { text: 'Set the database path above to point to the copied file' });
-            ol.createEl('li', { text: 'Run the "Import Kobo Highlights" command from the command palette' });
+            ol.createEl('li', { text: 'Run the "Import Kobo highlights" command from the command palette' });
         });
     }
 
@@ -233,7 +237,7 @@ export class KoboSettingTab extends PluginSettingTab {
             height: number;
         }
     ): void {
-        const setting = new Setting(containerEl)
+        new Setting(containerEl)
             .setName(options.name)
             .setDesc(options.desc)
             .addExtraButton(button => button
@@ -255,10 +259,7 @@ export class KoboSettingTab extends PluginSettingTab {
             }
         });
         textarea.value = this.plugin.settings[options.settingKey] as string;
-        textarea.style.width = '100%';
-        textarea.style.height = `${options.height}px`;
-        textarea.style.fontFamily = 'monospace';
-        textarea.style.fontSize = '12px';
+        textarea.setCssStyles({ height: `${options.height}px` });
 
         textarea.addEventListener('change', async () => {
             (this.plugin.settings[options.settingKey] as string) = textarea.value;
@@ -305,12 +306,6 @@ export class KoboSettingTab extends PluginSettingTab {
             preview += renderTemplate(this.plugin.settings.highlightTemplate, sampleHighlight);
 
             const pre = container.createEl('pre', { cls: 'kobo-preview-content' });
-            pre.style.padding = '1em';
-            pre.style.backgroundColor = 'var(--background-secondary)';
-            pre.style.borderRadius = '8px';
-            pre.style.overflow = 'auto';
-            pre.style.maxHeight = '400px';
-            pre.style.fontSize = '12px';
             pre.textContent = preview;
         } catch (error) {
             container.createEl('p', {

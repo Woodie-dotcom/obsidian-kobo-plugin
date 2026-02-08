@@ -31,6 +31,10 @@
     transition: width 0.3s ease;
 }
 
+.kobo-import-progress .progress-bar-fill.progress-error {
+    background-color: var(--text-error);
+}
+
 .kobo-import-stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -120,8 +124,14 @@
 
 .kobo-preview-content {
     font-family: var(--font-monospace);
+    font-size: 12px;
     white-space: pre-wrap;
     word-wrap: break-word;
+    padding: 1em;
+    background-color: var(--background-secondary);
+    border-radius: 8px;
+    overflow: auto;
+    max-height: 400px;
 }
 
 .kobo-preview-error {

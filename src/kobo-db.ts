@@ -5,8 +5,11 @@
  * Uses sql.js with proper WASM loading for Obsidian/Electron.
  */
 
-import initSqlJs, { Database, SqlJsStatic } from 'sql.js';
+import initSqlJs, { Database } from 'sql.js';
 import { SQL_WASM_BASE64 } from './wasm-data';
+
+// Type derived from initSqlJs return value (avoids broken SqlJsStatic type)
+type SqlJsFactory = Awaited<ReturnType<typeof initSqlJs>>;
 
 // ============================================================================
 // Interfaces 
@@ -80,12 +83,12 @@ export interface BookChapterData {
 // Database Connection
 // ============================================================================
 
-let SQL: SqlJsStatic | null = null;
+let SQL: SqlJsFactory | null = null;
 
 /**
  * Initialize sql.js with WASM loaded from inline base64 (no external file needed)
  */
-async function initSQL(): Promise<SqlJsStatic> {
+async function initSQL(): Promise<SqlJsFactory> {
     if (SQL) return SQL;
 
     // Decode Base64 WASM directly from bundle
@@ -125,9 +128,9 @@ function queryToObjects<T>(db: Database, sql: string): T[] {
     if (results.length === 0) return [];
 
     const columns = results[0].columns;
-    return results[0].values.map(row => {
+    return results[0].values.map((row: unknown[]) => {
         const obj: Record<string, unknown> = {};
-        columns.forEach((col, i) => {
+        columns.forEach((col: string, i: number) => {
             obj[col] = row[i];
         });
         return obj as T;
