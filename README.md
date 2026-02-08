@@ -1,10 +1,10 @@
-# Obsidian Kobo Highlights Importer
+# Kobo Smart Importer
 
 A community plugin for Obsidian that imports highlights and annotations from your Kobo eReader's SQLite database.
 
 ## Features
 
-- **Direct Database Import**: Reads directly from the `KoboReader.sqlite` file on your device.
+- **Direct Database Import**: Reads directly from the `KoboReader.sqlite` file on your device or from a local copy.
 - **Accurate Book Position**: Calculates the global position of highlights within the book (percentage), taking chapters into account.
 - **Flexible Templating**: Use custom templates with variables like `{{text}}`, `{{annotation}}`, `{{chapter}}`, `{{location}}`, and more.
 - **Conditional Logic**: Supports basic conditional rendering (e.g., `{% if annotation %}...{% endif %}`).
@@ -14,8 +14,10 @@ A community plugin for Obsidian that imports highlights and annotations from you
 ## Usage
 
 1. Connect your Kobo eReader to your computer via USB.
-2. In Obsidian, run the command **"Kobo Highlights: Import from Device"**.
-3. Select the `KoboReader.sqlite` file from your Kobo drive (usually in the `.kobo` folder).
+2. In plugin settings, set the database path to either:
+   - **Direct from device**: `E:\.kobo\KoboReader.sqlite` (Windows) or `/Volumes/KOBOeReader/.kobo/KoboReader.sqlite` (Mac)
+   - **Local copy**: Copy the file from your Kobo and set the path to that location
+3. Run the command **"Import Kobo highlights"** from the command palette.
 4. The plugin will scan for highlights and import them into your configured folder.
 
 ## Templating
@@ -45,7 +47,7 @@ You can customize how highlights are formatted using the settings.
 ## Installation
 
 1. Download the latest release.
-2. Extract the files into your vault's `.obsidian/plugins/obsidian-kobo-highlights` folder.
+2. Extract the files into your vault's `.obsidian/plugins/kobo-smart-importer` folder.
 3. Enable the plugin in Obsidian settings.
 
 ## Development
@@ -56,3 +58,4 @@ You can customize how highlights are formatted using the settings.
 
 ## Acknowledgements
 This project was partially inspired by [October](https://github.com/marcus-crane/october), a Kobo highlights extraction tool for Readwise by Marcus Crane.
+

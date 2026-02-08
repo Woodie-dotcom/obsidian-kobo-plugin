@@ -217,9 +217,12 @@ export class KoboSettingTab extends PluginSettingTab {
 
         const instructions = containerEl.createEl('div', { cls: 'kobo-instructions' });
         instructions.createEl('ol', {}, (ol) => {
-            ol.createEl('li', { text: 'Connect your Kobo device to your computer' });
-            ol.createEl('li', { text: 'Copy the KoboReader.sqlite file from the .kobo folder on your device' });
-            ol.createEl('li', { text: 'Set the database path above to point to the copied file' });
+            ol.createEl('li', { text: 'Connect your Kobo device to your computer via USB' });
+            const li2 = ol.createEl('li');
+            li2.appendText('Set the database path above to either:');
+            const subList = li2.createEl('ul');
+            subList.createEl('li', { text: 'Direct path on device (e.g., E:\\.kobo\\KoboReader.sqlite on Windows)' });
+            subList.createEl('li', { text: 'Path to a local copy of the file' });
             ol.createEl('li', { text: 'Run the "Import Kobo highlights" command from the command palette' });
         });
     }
