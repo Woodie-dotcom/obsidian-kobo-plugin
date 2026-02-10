@@ -71,7 +71,7 @@ export class KoboSettingTab extends PluginSettingTab {
         // Database path setting (manual entry only - Browse removed for electron compatibility)
         new Setting(containerEl)
             .setName('Database path')
-            .setDesc('Full path to your KoboReader.sqlite file. Connect your Kobo, navigate to the .kobo folder, and copy the full path.')
+            .setDesc('Full path to your KoboReader.sqlite file, found in the .kobo folder on your device.')
             .addText(text => text
                 .setPlaceholder('C:\\Users\\...\\KoboReader.sqlite or /Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
                 .setValue(this.plugin.settings.databasePath)
@@ -84,7 +84,7 @@ export class KoboSettingTab extends PluginSettingTab {
             .setName('Output folder')
             .setDesc('Folder where imported highlight notes will be saved (relative to vault root).')
             .addText(text => text
-                .setPlaceholder('Kobo Highlights')
+                .setPlaceholder('Kobo highlights')
                 .setValue(this.plugin.settings.outputFolder)
                 .onChange(async (value) => {
                     this.plugin.settings.outputFolder = value;
@@ -93,7 +93,7 @@ export class KoboSettingTab extends PluginSettingTab {
         // Include store-bought books
         new Setting(containerEl)
             .setName('Include store-bought books')
-            .setDesc('Import highlights from books purchased from the Kobo store, not just sideloaded books.')
+            .setDesc('Also import highlights from store-purchased books, not just sideloaded ones.')
             .addToggle(toggle => toggle
                 .setValue(this.plugin.settings.includeStoreBought)
                 .onChange(async (value) => {
@@ -216,13 +216,13 @@ export class KoboSettingTab extends PluginSettingTab {
 
         const instructions = containerEl.createEl('div', { cls: 'kobo-instructions' });
         instructions.createEl('ol', {}, (ol) => {
-            ol.createEl('li', { text: 'Connect your Kobo device to your computer via USB' });
+            ol.createEl('li', { text: 'Connect your device to your computer' });
             const li2 = ol.createEl('li');
             li2.appendText('Set the database path above to either:');
             const subList = li2.createEl('ul');
             subList.createEl('li', { text: 'Direct path on device (e.g., E:\\.kobo\\KoboReader.sqlite on Windows)' });
             subList.createEl('li', { text: 'Path to a local copy of the file' });
-            ol.createEl('li', { text: 'Run the "Import Kobo highlights" command from the command palette' });
+            ol.createEl('li', { text: 'Run the "Import highlights" command from the command palette' });
         });
     }
 

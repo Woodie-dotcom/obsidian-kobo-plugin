@@ -43,7 +43,7 @@ export default class KoboHighlightsPlugin extends Plugin {
         // Add command to import highlights
         this.addCommand({
             id: 'import-kobo-highlights',
-            name: 'Import Kobo highlights',
+            name: 'Import highlights',
             callback: () => { void this.importHighlights(); },
         });
 
@@ -199,7 +199,7 @@ class ImportProgressModal extends Modal {
         this.contentEl_.empty();
         this.contentEl_.addClass('kobo-import-modal');
 
-        new Setting(this.contentEl_).setName('Importing Kobo highlights').setHeading();
+        new Setting(this.contentEl_).setName('Importing highlights').setHeading();
 
         this.statusEl = this.contentEl_.createEl('p', {
             text: 'Initializing...',

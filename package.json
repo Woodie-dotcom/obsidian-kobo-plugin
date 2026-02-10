@@ -1,6 +1,6 @@
 {
     "name": "kobo-smart-importer",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Import highlights and annotations from your Kobo eReader's SQLite database into your notes.",
     "main": "main.js",
     "scripts": {
