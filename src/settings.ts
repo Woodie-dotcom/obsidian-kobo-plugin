@@ -71,7 +71,7 @@ export class KoboSettingTab extends PluginSettingTab {
         // Database path setting (manual entry only - Browse removed for electron compatibility)
         new Setting(containerEl)
             .setName('Database path')
-            .setDesc('Full path to your KoboReader.sqlite file, found in the .kobo folder on your device.')
+            .setDesc('Full path to your Kobo database file, found in the .kobo folder on your device.')
             .addText(text => text
                 .setPlaceholder('C:\\Users\\...\\KoboReader.sqlite or /Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
                 .setValue(this.plugin.settings.databasePath)
@@ -222,7 +222,7 @@ export class KoboSettingTab extends PluginSettingTab {
             const subList = li2.createEl('ul');
             subList.createEl('li', { text: 'Direct path on device (e.g., E:\\.kobo\\KoboReader.sqlite on Windows)' });
             subList.createEl('li', { text: 'Path to a local copy of the file' });
-            ol.createEl('li', { text: 'Run the "Import highlights" command from the command palette' });
+            ol.createEl('li', { text: 'Open the command palette and search for the import highlights command' });
         });
     }
 
