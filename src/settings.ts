@@ -65,9 +65,8 @@ export class KoboSettingTab extends PluginSettingTab {
         new Setting(containerEl).setName('Kobo highlights importer').setHeading();
 
         // ====================================================================
-        // General Settings Section
+        // Core Options
         // ====================================================================
-        new Setting(containerEl).setName('General settings').setHeading();
 
         // Database path setting (manual entry only - Browse removed for electron compatibility)
         new Setting(containerEl)
@@ -178,7 +177,7 @@ export class KoboSettingTab extends PluginSettingTab {
 
         // Page metadata template
         this.addTextAreaSetting(containerEl, {
-            name: 'Page Metadata',
+            name: 'Page metadata',
             desc: 'Content shown after frontmatter (title, author info, etc.).',
             settingKey: 'pageMetadataTemplate',
             defaultValue: DEFAULT_TEMPLATES.pageMetadata,
@@ -187,7 +186,7 @@ export class KoboSettingTab extends PluginSettingTab {
 
         // Highlight template
         this.addTextAreaSetting(containerEl, {
-            name: 'Highlight Format',
+            name: 'Highlight format',
             desc: 'Template for each individual highlight.',
             settingKey: 'highlightTemplate',
             defaultValue: DEFAULT_TEMPLATES.highlight,
@@ -196,7 +195,7 @@ export class KoboSettingTab extends PluginSettingTab {
 
         // Sync header template
         this.addTextAreaSetting(containerEl, {
-            name: 'New Highlights Header',
+            name: 'New highlights header',
             desc: 'Header shown when new highlights are added to an existing note.',
             settingKey: 'syncHeaderTemplate',
             defaultValue: DEFAULT_TEMPLATES.syncHeader,
@@ -264,9 +263,9 @@ export class KoboSettingTab extends PluginSettingTab {
         textarea.value = this.plugin.settings[options.settingKey] as string;
         textarea.setCssStyles({ height: `${options.height}px` });
 
-        textarea.addEventListener('change', async () => {
+        textarea.addEventListener('change', () => {
             (this.plugin.settings[options.settingKey] as string) = textarea.value;
-            await this.plugin.saveSettings();
+            void this.plugin.saveSettings();
         });
     }
 
