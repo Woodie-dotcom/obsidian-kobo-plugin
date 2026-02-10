@@ -71,7 +71,7 @@ export class KoboSettingTab extends PluginSettingTab {
         // Database path setting (manual entry only - Browse removed for electron compatibility)
         new Setting(containerEl)
             .setName('Database path')
-            .setDesc('Full path to your Kobo database file, found in the .kobo folder on your device.')
+            .setDesc('Full path to your kobo database file, found in the .kobo folder on your device.')
             .addText(text => text
                 .setPlaceholder('C:\\Users\\...\\KoboReader.sqlite or /Volumes/KOBOeReader/.kobo/KoboReader.sqlite')
                 .setValue(this.plugin.settings.databasePath)
