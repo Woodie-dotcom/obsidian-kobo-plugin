@@ -339,10 +339,11 @@ export function appendHighlightsToNote(
 }
 
 /**
- * Generate a safe filename from a book title using template
+ * Generate a safe filename for a book using the file name template.
+ * Uses the full book context so variables like {{author}} are available.
  */
-export function generateFilename(title: string, settings: KoboPluginSettings): string {
-    const context: TemplateContext = { title };
+export function generateFilename(bookWithHighlights: BookWithHighlights, settings: KoboPluginSettings): string {
+    const context = createBookContext(bookWithHighlights.book, bookWithHighlights.highlights.length);
     let filename = renderTemplate(settings.fileNameTemplate, context);
 
     // Sanitize filename

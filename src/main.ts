@@ -111,7 +111,7 @@ export default class KoboHighlightsPlugin extends Plugin {
         folder: TFolder,
         chapterData?: BookChapterData
     ): Promise<{ file: TFile; newHighlights: number; isNew: boolean }> {
-        const filename = generateFilename(bookWithHighlights.book.title, this.settings) + '.md';
+        const filename = generateFilename(bookWithHighlights, this.settings) + '.md';
         const filePath = `${folder.path}/${filename}`;
 
         const existingFile = this.app.vault.getAbstractFileByPath(filePath);
